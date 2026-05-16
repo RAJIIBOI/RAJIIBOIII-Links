@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAJIIBOIII — Links</title>
+  <link rel="stylesheet" href="../css/shared.css">
+  <link rel="stylesheet" href="../css/links.css">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="scanline"></div>
+  <div id="toast-container"></div>
+
+  <nav>
+    <a href="../index.html" class="nav-logo">RAJIIBOIII</a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="links.html" class="active">Links</a>
+      <a href="bookmarks.html">Bookmarks</a>
+      <a href="profile.html">Profile</a>
+      <a href="coming-soon.html">Shop</a>
+    </div>
+    <div class="nav-right">
+      <span id="points-display">⚡ 0 pts</span>
+      <span id="title-badge"></span>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="links-header">
+      <h1 class="links-title">All Links</h1>
+      <p class="links-sub">Click any link to open it. Bookmark your favorites. Every visit earns you points.</p>
+      <div class="links-toolbar">
+        <input class="input-field search-field" id="search-input" type="text" placeholder="Search links or categories...">
+        <div class="filter-pills" id="filter-pills">
+          <button class="pill active" data-filter="all">All</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="links-grid" class="links-grid"></div>
+  </div>
+
+  <script src="../js/links-data.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/links.js"></script>
+</body>
+</html>

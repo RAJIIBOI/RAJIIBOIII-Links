@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAJIIBOIII — Bookmarks</title>
+  <link rel="stylesheet" href="../css/shared.css">
+  <style>
+    .page-header {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 32px 24px;
+    }
+    .page-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+    .page-sub { font-size: 0.9rem; color: var(--text); margin-bottom: 28px; }
+
+    .bm-list {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 32px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+
+    .bm-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+    .bm-card:hover { border-color: var(--accent); }
+
+    .bm-icon { font-size: 1rem; flex-shrink: 0; }
+
+    .bm-info { flex: 1; overflow: hidden; }
+    .bm-url {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-bright);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+    .bm-visits {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text);
+      opacity: 0.4;
+      margin-top: 2px;
+    }
+
+    .bm-actions { display: flex; gap: 6px; }
+
+    .icon-btn {
+      background: none;
+      border: 1px solid var(--border-bright);
+      border-radius: 4px;
+      padding: 5px 8px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+    .icon-btn.open-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .empty-state {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text);
+      opacity: 0.4;
+      padding: 60px 32px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .empty-state a { color: var(--accent); text-decoration: none; }
+
+    .bm-toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .bm-count {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text);
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="scanline"></div>
+  <div id="toast-container"></div>
+
+  <nav>
+    <a href="../index.html" class="nav-logo">RAJIIBOIII</a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="links.html">Links</a>
+      <a href="bookmarks.html" class="active">Bookmarks</a>
+      <a href="profile.html">Profile</a>
+      <a href="coming-soon.html">Shop</a>
+    </div>
+    <div class="nav-right">
+      <span id="points-display">⚡ 0 pts</span>
+      <span id="title-badge"></span>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="page-header">
+      <h1 class="page-title">🔖 Bookmarks</h1>
+      <p class="page-sub">Your saved links. Click to open in a new tab.</p>
+      <div class="bm-toolbar">
+        <span class="bm-count" id="bm-count"></span>
+        <button class="btn" onclick="clearAllBookmarks()" id="clear-btn" style="display:none">Clear All</button>
+      </div>
+    </div>
+    <div id="bm-list" class="bm-list"></div>
+    <div id="bm-empty" class="empty-state" style="display:none">
+      No bookmarks yet.<br>
+      <a href="links.html">Browse links →</a>
+    </div>
+  </div>
+
+  <script src="../js/links-data.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    initBgCanvas();
+    initNav();
+    renderBookmarks();
+  });
+
+  function renderBookmarks() {
+    const p = getProfile();
+    const bms = p.bookmarks || [];
+    const list = document.getElementById('bm-list');
+    const empty = document.getElementById('bm-empty');
+    const countEl = document.getElementById('bm-count');
+    const clearBtn = document.getElementById('clear-btn');
+    list.innerHTML = '';
+
+    if (bms.length === 0) {
+      empty.style.display = 'block';
+      countEl.textContent = '';
+      clearBtn.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    countEl.textContent = `${bms.length} bookmark${bms.length !== 1 ? 's' : ''}`;
+    clearBtn.style.display = '';
+
+    bms.forEach(url => {
+      const visits = (p.linkVisits || {})[url] || 0;
+      const host = url.replace(/^https?:\/\//, '');
+      const card = document.createElement('div');
+      card.className = 'bm-card';
+      card.innerHTML = `
+        <span class="bm-icon">🔖</span>
+        <div class="bm-info">
+          <span class="bm-url">${host}</span>
+          <span class="bm-visits">${visits > 0 ? `${visits} visit${visits !== 1 ? 's' : ''}` : 'Not visited yet'}</span>
+        </div>
+        <div class="bm-actions">
+          <button class="icon-btn open-btn" onclick="openLink('${url}')">Open ↗</button>
+          <button class="icon-btn" onclick="removeBookmark('${url}', this)">✕</button>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  function openLink(url) {
+    recordLinkVisit(url);
+    refreshPoints();
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setTimeout(renderBookmarks, 100);
+  }
+
+  function removeBookmark(url, btn) {
+    toggleBookmark(url);
+    btn.closest('.bm-card').remove();
+    const p = getProfile();
+    const remaining = p.bookmarks?.length || 0;
+    document.getElementById('bm-count').textContent = `${remaining} bookmark${remaining !== 1 ? 's' : ''}`;
+    if (remaining === 0) {
+      document.getElementById('bm-empty').style.display = 'block';
+      document.getElementById('clear-btn').style.display = 'none';
+    }
+    showToast('Bookmark removed', 'info');
+  }
+
+  function clearAllBookmarks() {
+    if (!confirm('Remove all bookmarks?')) return;
+    const p = getProfile();
+    p.bookmarks = [];
+    saveProfile(p);
+    renderBookmarks();
+    showToast('All bookmarks cleared', 'info');
+  }
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAJIIBOIII — Hub</title>
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="scanline"></div>
+  <div id="toast-container"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">RAJIIBOIII</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="pages/links.html">Links</a>
+      <a href="pages/bookmarks.html">Bookmarks</a>
+      <a href="pages/profile.html">Profile</a>
+      <a href="pages/coming-soon.html">Shop</a>
+    </div>
+    <div class="nav-right">
+      <span id="points-display">⚡ 0 pts</span>
+      <span id="title-badge"></span>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-glow glow-1"></div>
+      <div class="hero-glow glow-2"></div>
+      <div class="hero-inner">
+        <div class="hero-label">LINK HUB / ALL SYSTEMS GO</div>
+        <h1 class="hero-title">
+          <span class="hero-name">RAJIIBOIII</span><br>
+          <span class="hero-sub">YOUR GATEWAY.</span>
+        </h1>
+        <p class="hero-desc">Access every proxy, tool, and platform from one place. Earn points. Track your favorites. Level up.</p>
+        <div class="hero-actions">
+          <a href="pages/links.html" class="btn primary">Browse All Links →</a>
+          <button class="btn" onclick="openCodeModal()">Enter Code</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num" id="total-links-count">—</span>
+            <span class="stat-label">Total Links</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" id="total-cats-count">—</span>
+            <span class="stat-label">Categories</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" id="user-pts-count">—</span>
+            <span class="stat-label">Your Points</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUICK ACCESS (bookmarks) -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">⚡ Quick Access</h2>
+        <a href="pages/bookmarks.html" class="section-link">View All Bookmarks →</a>
+      </div>
+      <div id="quick-bookmarks" class="quick-grid">
+        <div class="empty-state" id="bm-empty">No bookmarks yet. <a href="pages/links.html">Browse links</a> to bookmark your favorites.</div>
+      </div>
+    </section>
+
+    <!-- CATEGORY PREVIEW GRID -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">🗂️ Categories</h2>
+        <a href="pages/links.html" class="section-link">All Links →</a>
+      </div>
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- MOST VISITED -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">🔥 Most Visited</h2>
+      </div>
+      <div id="most-visited" class="most-visited">
+        <div class="empty-state" id="mv-empty">Visit some links to see your most-used sites here.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CODE MODAL -->
+  <div class="modal-overlay" id="code-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('code-modal')">✕</button>
+      <h2>🔑 Enter Code</h2>
+      <p style="font-size:0.85rem;color:var(--text);margin-bottom:16px;">Got a secret code? Enter it below to unlock a title and bonus points.</p>
+      <input class="input-field" id="code-input" type="text" placeholder="Enter your code..." style="margin-bottom:12px;" onkeydown="if(event.key==='Enter') submitCode()">
+      <button class="btn primary" onclick="submitCode()" style="width:100%">Redeem Code</button>
+      <div id="code-result" style="margin-top:12px;font-size:0.8rem;font-family:'Share Tech Mono',monospace;"></div>
+    </div>
+  </div>
+
+  <script src="js/links-data.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

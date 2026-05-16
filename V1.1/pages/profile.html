@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAJIIBOIII — Profile</title>
+  <link rel="stylesheet" href="../css/shared.css">
+  <style>
+    .page-header {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 32px 24px;
+    }
+    .page-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+
+    .profile-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 32px 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .profile-wrap { grid-template-columns: 1fr; } }
+
+    .profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px;
+    }
+    .profile-card.wide { grid-column: 1 / -1; }
+
+    .card-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text-bright);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row .label { color: var(--text); }
+    .stat-row .value { color: var(--accent); font-weight: 700; }
+
+    /* achievements */
+    .ach-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .ach-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      transition: all 0.2s;
+    }
+    .ach-item.unlocked {
+      border-color: var(--accent);
+      background: rgba(0,245,196,0.05);
+    }
+    .ach-item.locked { opacity: 0.4; filter: grayscale(0.8); }
+    .ach-icon { font-size: 1.4rem; display: block; margin-bottom: 6px; }
+    .ach-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-bright);
+      display: block;
+      margin-bottom: 3px;
+    }
+    .ach-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text);
+    }
+
+    /* code form */
+    .code-form { display: flex; gap: 8px; }
+    .code-form .input-field { flex: 1; }
+    #code-result {
+      margin-top: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+    }
+
+    /* reset */
+    .danger-zone {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,47,160,0.2);
+    }
+    .danger-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .btn.danger {
+      border-color: var(--accent3);
+      color: var(--accent3);
+    }
+    .btn.danger:hover { background: rgba(255,47,160,0.08); }
+
+    /* title display */
+    .title-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      color: var(--text-bright);
+    }
+    .title-badge-large {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent2), var(--accent3));
+      padding: 4px 12px;
+      border-radius: 99px;
+    }
+    .no-title { color: var(--text); opacity: 0.4; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; }
+
+    .pts-big {
+      font-family: 'Orbitron', monospace;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-shadow: var(--glow-teal);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .pts-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="scanline"></div>
+  <div id="toast-container"></div>
+
+  <nav>
+    <a href="../index.html" class="nav-logo">RAJIIBOIII</a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="links.html">Links</a>
+      <a href="bookmarks.html">Bookmarks</a>
+      <a href="profile.html" class="active">Profile</a>
+      <a href="coming-soon.html">Shop</a>
+    </div>
+    <div class="nav-right">
+      <span id="points-display">⚡ 0 pts</span>
+      <span id="title-badge"></span>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="page-header">
+      <h1 class="page-title">👤 Profile</h1>
+    </div>
+
+    <div class="profile-wrap">
+
+      <!-- POINTS -->
+      <div class="profile-card">
+        <div class="card-title">Points</div>
+        <span class="pts-big" id="pts-big">0</span>
+        <span class="pts-label">Total Points Earned</span>
+      </div>
+
+      <!-- TITLE -->
+      <div class="profile-card">
+        <div class="card-title">Title</div>
+        <div id="title-display" class="title-display">
+          <span class="no-title">No title yet. Enter a code!</span>
+        </div>
+        <div style="margin-top:14px;font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--text);opacity:0.5;line-height:1.6;">
+          Codes you've used: <span id="codes-used">—</span>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="profile-card">
+        <div class="card-title">Stats</div>
+        <div class="stat-row"><span class="label">Total links visited</span><span class="value" id="stat-visits">0</span></div>
+        <div class="stat-row"><span class="label">Unique sites</span><span class="value" id="stat-unique">0</span></div>
+        <div class="stat-row"><span class="label">Bookmarks</span><span class="value" id="stat-bm">0</span></div>
+        <div class="stat-row"><span class="label">Visit streak</span><span class="value" id="stat-streak">0 days</span></div>
+        <div class="stat-row"><span class="label">Last visit</span><span class="value" id="stat-last">—</span></div>
+      </div>
+
+      <!-- REDEEM CODE -->
+      <div class="profile-card">
+        <div class="card-title">Redeem Code</div>
+        <p style="font-size:0.82rem;color:var(--text);margin-bottom:14px;">Enter a secret code to unlock a title and earn bonus points.</p>
+        <div class="code-form">
+          <input class="input-field" id="code-input" type="text" placeholder="CODE..." onkeydown="if(event.key==='Enter') submitCode()">
+          <button class="btn primary" onclick="submitCode()">Redeem</button>
+        </div>
+        <div id="code-result"></div>
+
+        <div class="danger-zone">
+          <div class="danger-title">⚠ Danger Zone</div>
+          <button class="btn danger" onclick="resetProfile()">Reset All Data</button>
+        </div>
+      </div>
+
+      <!-- ACHIEVEMENTS -->
+      <div class="profile-card wide">
+        <div class="card-title">Achievements</div>
+        <div class="ach-grid" id="ach-grid"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../js/links-data.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    initBgCanvas();
+    initNav();
+    renderProfile();
+  });
+
+  function renderProfile() {
+    const p = getProfile();
+
+    document.getElementById('pts-big').textContent = p.points || 0;
+
+    // Title
+    const td = document.getElementById('title-display');
+    if (p.title) {
+      td.innerHTML = `<span class="title-badge-large">${p.title}</span>`;
+    }
+
+    // Codes used
+    document.getElementById('codes-used').textContent = (p.codesUsed || []).join(', ') || '—';
+
+    // Stats
+    const visits = Object.values(p.linkVisits || {}).reduce((a,b) => a+b, 0);
+    const unique = Object.keys(p.linkVisits || {}).length;
+    document.getElementById('stat-visits').textContent = visits;
+    document.getElementById('stat-unique').textContent = unique;
+    document.getElementById('stat-bm').textContent = (p.bookmarks || []).length;
+    document.getElementById('stat-streak').textContent = `${p.visitStreak || 0} day${p.visitStreak !== 1 ? 's' : ''}`;
+    document.getElementById('stat-last').textContent = p.lastVisit || '—';
+
+    // Achievements
+    const achGrid = document.getElementById('ach-grid');
+    achGrid.innerHTML = '';
+    REWARDS.forEach(r => {
+      const unlocked = (p.unlockedRewards || []).includes(r.id);
+      const div = document.createElement('div');
+      div.className = `ach-item ${unlocked ? 'unlocked' : 'locked'}`;
+      div.innerHTML = `
+        <span class="ach-icon">${r.icon}</span>
+        <span class="ach-label">${r.label}</span>
+        <span class="ach-desc">${r.desc}</span>
+        ${unlocked ? '<div style="margin-top:6px;font-family:\'Share Tech Mono\',monospace;font-size:0.6rem;color:var(--accent)">✓ UNLOCKED</div>' : ''}
+      `;
+      achGrid.appendChild(div);
+    });
+  }
+
+  function submitCode() {
+    const code = document.getElementById('code-input').value;
+    const result = redeemCode(code);
+    const el = document.getElementById('code-result');
+    if (result.success) {
+      el.style.color = 'var(--accent)';
+      el.textContent = `✓ Title "${result.title}" unlocked! +${result.bonus} pts`;
+      showToast(`🎉 Code redeemed! Title: ${result.title}`, 'success');
+      refreshPoints();
+      renderProfile();
+    } else {
+      el.style.color = 'var(--accent3)';
+      el.textContent = `✗ ${result.msg}`;
+    }
+    document.getElementById('code-input').value = '';
+  }
+
+  function resetProfile() {
+    if (!confirm('Reset ALL data? Points, bookmarks, and visit history will be lost.')) return;
+    localStorage.removeItem('raji_profile');
+    showToast('Profile reset.', 'info');
+    setTimeout(() => location.reload(), 800);
+  }
+  </script>
+</body>
+</html>
